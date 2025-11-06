@@ -1,0 +1,63 @@
+services:
+  cattlemanagement.api:
+    image: ${DOCKER_REGISTRY-}cattlemanagementapi
+    build:
+      context: src/CattleManagement/CattleManagement.API
+      dockerfile: Dockerfile
+    container_name: cattlemanagement-api-service
+    depends_on:
+      - cattlemanagement.db
+    restart: unless-stopped
+    ports:
+        - "8080:8080"
+
+  cattlemanagement.db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=P@ssword123
+    volumes:
+      - cattlemanagement_data:/var/opt/mssql
+    ports:
+      - "1433:1433"
+    container_name: cattlemanagement-db-service
+    restart: unless-stopped
+
+  milkingyield.api:
+    image: ${DOCKER_REGISTRY-}milkingyieldapi
+    build:
+      context: src/MilkingYield/MilkingYield.API
+      dockerfile: Dockerfile
+    container_name: milkingyield-api-service
+    depends_on:
+      - milkingyield.db
+    ports:
+        - "5000:5000"
+
+  milkingyield.db:
+    image: postgres:latest
+    container_name: milkingyield-db-service
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: milkingdb
+    volumes:
+        - milkingyield_data:/var/lib/data
+    ports:
+        - "5432:5432"
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-load-balancer
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - milkingyield.api
+    restart: unless-stopped
+
+volumes:
+    cattlemanagement_data:
+    milkingyield_data:
+

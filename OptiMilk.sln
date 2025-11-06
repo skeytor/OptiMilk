@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{913D847E-FD7C-46D5-833E-D843EE619A08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MilkingYield", "MilkingYield", "{E4815652-E9AC-476C-A3E3-92B575504B56}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CattleManagment", "CattleManagment", "{0BC1B7C7-A008-404F-B186-A2122E439E86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CattleManagement.API", "src\CattleManagement\CattleManagement.API\CattleManagement.API.csproj", "{7E5B105D-E48B-4486-8EB3-742C067F348F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MilkingYield.API", "src\MilkingYield\MilkingYield.API\MilkingYield.API.csproj", "{8D7229FA-E3D5-455C-BCE2-AACCBADA0DCD}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E5B105D-E48B-4486-8EB3-742C067F348F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E5B105D-E48B-4486-8EB3-742C067F348F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E5B105D-E48B-4486-8EB3-742C067F348F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E5B105D-E48B-4486-8EB3-742C067F348F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D7229FA-E3D5-455C-BCE2-AACCBADA0DCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D7229FA-E3D5-455C-BCE2-AACCBADA0DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D7229FA-E3D5-455C-BCE2-AACCBADA0DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D7229FA-E3D5-455C-BCE2-AACCBADA0DCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E4815652-E9AC-476C-A3E3-92B575504B56} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{0BC1B7C7-A008-404F-B186-A2122E439E86} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{7E5B105D-E48B-4486-8EB3-742C067F348F} = {0BC1B7C7-A008-404F-B186-A2122E439E86}
+		{8D7229FA-E3D5-455C-BCE2-AACCBADA0DCD} = {E4815652-E9AC-476C-A3E3-92B575504B56}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF5466EE-D861-4EE7-8EC9-6999A6D53B07}
+	EndGlobalSection
+EndGlobal

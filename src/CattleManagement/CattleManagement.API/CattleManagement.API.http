@@ -1,0 +1,6 @@
+@CattleManagement.API_HostAddress = http://localhost:5076
+
+GET {{CattleManagement.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
