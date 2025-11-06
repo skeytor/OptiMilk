@@ -2,8 +2,8 @@ services:
   cattlemanagement.api:
     image: ${DOCKER_REGISTRY-}cattlemanagementapi
     build:
-      context: src/CattleManagement/CattleManagement.API
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/CattleManagement/CattleManagement.API/Dockerfile
     container_name: cattlemanagement-api-service
     depends_on:
       - cattlemanagement.db
@@ -26,8 +26,8 @@ services:
   milkingyield.api:
     image: ${DOCKER_REGISTRY-}milkingyieldapi
     build:
-      context: src/MilkingYield/MilkingYield.API
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/MilkingYield/MilkingYield.API/Dockerfile
     container_name: milkingyield-api-service
     depends_on:
       - milkingyield.db
