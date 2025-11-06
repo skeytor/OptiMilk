@@ -16,19 +16,18 @@ Manages cattle data, including registration, tracking, and health records.
 - **Docker Support:** Ready for containerization and orchestration.
 - **Scalar API Exposure:**  
   - Uses `Scalar.AspNetCore` to expose scalar endpoints for efficient, strongly-typed queries and commands.
-  - Enables high-performance, CQRS-style API interactions.
 
 ### 2. MilkingYield.API
 
-**Purpose:**  
-Tracks and analyzes milking yield data for herds, supporting advanced reporting and insights.
+**Purpose:**
+Manages milking yield data, including recording yields, analyzing trends, and generating reports.
 
 **Main Features:**
 - **Entity Framework Core (PostgreSQL):** Advanced data access and migrations.
 - **OpenAPI Support:** API documentation and testing via Swagger UI.
 - **Docker Support:** Ready for containerization and orchestration.
 - **Scalar API Exposure:**  
-  - Uses `Scalar.AspNetCore` for high-performance, CQRS-style API endpoints.
+  - Uses `Scalar.AspNetCore` for API documentation
 - **Resilience Patterns:**
   - **Load Balancer:**  
     - Utilizes `Microsoft.Extensions.Http.Resilience` to distribute HTTP requests across multiple service instances, improving scalability and fault tolerance.
@@ -39,11 +38,10 @@ Tracks and analyzes milking yield data for herds, supporting advanced reporting 
 
 - **.NET 9**
 - **Entity Framework Core (SQL Server & PostgreSQL)**
-- **Scalar.AspNetCore** (CQRS endpoints)
 - **Polly** (Resilience, Circuit Breaker)
 - **Microsoft.Extensions.Http.Resilience** (Load Balancing, Circuit Breaker)
 - **Docker** (Linux containers)
-- **OpenAPI/Swagger**
+- **OpenAPI/Scalar**
 
 ## API Exposure
 
@@ -66,7 +64,7 @@ To run the microservices locally, ensure you have Docker installed and execute t
 
 1. **Clone the repository.**
 - ```bash
-   git clone
+   git clone https://github.com/skeytor/OptiMilk
   ```
 2. **Run Docker Compose:**
    ```bash
