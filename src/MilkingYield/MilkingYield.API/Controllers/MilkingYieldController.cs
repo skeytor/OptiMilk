@@ -7,25 +7,58 @@ namespace MilkingYield.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class MilkingYieldController(AppDbContext contex, MilkingSessionService service) : ControllerBase
+public class MilkingYieldController(MilkingSessionService service) : ControllerBase
 {
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateMilkingRecordRequest request)
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateMilkingRecordRequest request)
     {
-        MilkingRecord milkingRecord = new()
-        {
-            CowId = request.CowId,
-            YieldInLiters = request.YieldInLiters
-        };
-        await contex.MilkingYields.AddAsync(milkingRecord);
-        await contex.SaveChangesAsync();
-        return Ok();
+        var result = await service.InsertAsync(request);
+        return result.IsSuccess 
+            ? CreatedAtAction(nameof(CreateAsync), result.Value) 
+            : BadRequest(result.Error);
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<GetMilkingRecord>>> GetPaged(int page = 1, int size = 10)
+    [ProducesResponseType(typeof(List<GetMilkingRecord>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<GetMilkingRecord>>> GetPagedAsync(
+        [FromQuery] int page = 1,
+        [FromQuery] int size = 10) => await service.GetPagedRecordsAsync(page, size);
+
+    [HttpGet("{cowId:guid}")]
+    [ProducesResponseType(typeof(GetMilkingRecord), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GetMilkingRecord>> GetByCowIdAsync([FromRoute] Guid cowId)
     {
-        return await service.GetMilkingSessionsAsync(page, size);
+        var result = await service.GetRecordByCowIdAsync(cowId);
+        return result.IsSuccess 
+            ? Ok(result.Value) 
+            : NotFound(result.Error);
+    }
+
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Guid>> UpdateAsync(
+        [FromRoute] Guid id,
+        [FromBody] UpdateMilkingSessionRequest request)
+    {
+        var result = await service.UpdateAsync(id, request);
+        return result.IsSuccess 
+            ? Ok(id) 
+            : NotFound(result.Error);
+    }
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Guid>> DeleteAsync([FromRoute] Guid id)
+    {
+        var result = await service.DeleteAsync(id);
+        return result.IsSuccess 
+            ? Ok(result.Value) 
+            : NotFound(result.Error);
     }
 }

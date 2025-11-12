@@ -10,7 +10,7 @@ public sealed class MilkingSessionService(CattleApiClient client, AppDbContext c
 {
     private readonly CattleApiClient _client = client;
     private readonly AppDbContext _context = context;
-    public async Task<Result<MilkingRecord>> CreateMilkingSession(CreateMilkingRecordRequest request)
+    public async Task<Result<MilkingRecord>> InsertAsync(CreateMilkingRecordRequest request)
     {
         if (!await _client.CattleExistsAsync(request.CowId))
         {
@@ -27,7 +27,7 @@ public sealed class MilkingSessionService(CattleApiClient client, AppDbContext c
         await _context.SaveChangesAsync();
         return Result.Success(milkingRecord);
     }
-    public async Task<Result<List<GetMilkingRecord>>> GetMilkingSessionsAsync(int page, int size)
+    public async Task<List<GetMilkingRecord>> GetPagedRecordsAsync(int page, int size)
     {
         List<MilkingRecord> milkingRecords = await _context.MilkingYields
             .AsNoTracking()
@@ -49,10 +49,10 @@ public sealed class MilkingSessionService(CattleApiClient client, AppDbContext c
             var record = milkingRecords.First(m => m.CowId == cattle.Id);
             results.Add(new GetMilkingRecord(record.Id, cattle, record.Date, record.YieldInLiters));
         }
-        return Result.Success(results);
+        return results;
     }
     
-    public async Task<Result<GetMilkingRecord>> GetMilkingSessionByCowId(Guid cowId)
+    public async Task<Result<GetMilkingRecord>> GetRecordByCowIdAsync(Guid cowId)
     {
         if (await _client.GetCowByIdAsync(cowId) is not Cattle cow)
         {
