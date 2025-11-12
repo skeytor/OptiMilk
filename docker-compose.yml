@@ -7,9 +7,12 @@ services:
     container_name: cattlemanagement-api-service
     depends_on:
       - cattlemanagement.db
+      - kafka
     restart: unless-stopped
     ports:
-        - "8080:8080"
+      - "8080:8080"
+    environment:
+      - KAFKA__BOOTSTRAP_SERVERS=kafka:9092
 
   cattlemanagement.db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -31,8 +34,11 @@ services:
     container_name: milkingyield-api-service
     depends_on:
       - milkingyield.db
+      - kafka
     ports:
-        - "5000:5000"
+      - "5000:5000"
+    environment:
+      - KAFKA__BOOTSTRAP_SERVERS=kafka:9092
 
   milkingyield.db:
     image: postgres:latest
@@ -42,9 +48,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: milkingdb
     volumes:
-        - milkingyield_data:/var/lib/data
+      - milkingyield_data:/var/lib/data
     ports:
-        - "5432:5432"
+      - "5432:5432"
 
   nginx:
     image: nginx:latest
@@ -57,7 +63,37 @@ services:
       - milkingyield.api
     restart: unless-stopped
 
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper-service
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data:/bitnami
+    restart: unless-stopped
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka-service
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/bitnami
+    restart: unless-stopped
+
 volumes:
-    cattlemanagement_data:
-    milkingyield_data:
+  cattlemanagement_data:
+  milkingyield_data:
+  zookeeper_data:
+  kafka_data:
 

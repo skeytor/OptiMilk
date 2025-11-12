@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MilkingYield.API.DTOs;
-using MilkingYield.API.Models;
 using MilkingYield.API.Services;
 
 namespace MilkingYield.API.Controllers;
