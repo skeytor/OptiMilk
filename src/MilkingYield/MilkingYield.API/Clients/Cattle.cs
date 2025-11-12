@@ -1,4 +1,4 @@
-﻿namespace MilkingYield.API.Models;
+﻿namespace MilkingYield.API.Clients;
 
 public sealed class Cattle
 {

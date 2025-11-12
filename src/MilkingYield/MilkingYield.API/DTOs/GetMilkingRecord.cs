@@ -1,4 +1,4 @@
-﻿using MilkingYield.API.Models;
+﻿using MilkingYield.API.Clients;
 
 namespace MilkingYield.API.DTOs;
 

@@ -8,3 +8,10 @@ public sealed record CreateMilkingRecordRequest(
 
     [Required,Range(0.1, double.MaxValue)]
     double YieldInLiters);
+
+public sealed record UpdateMilkingSessionRequest(
+    [Required]
+    Guid CowId,
+
+    [Required, Range(0.1, double.MaxValue)]
+    double YieldInLiters);

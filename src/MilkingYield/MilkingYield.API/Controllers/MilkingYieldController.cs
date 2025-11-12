@@ -26,6 +26,6 @@ public class MilkingYieldController(AppDbContext contex, MilkingSessionService s
     [HttpGet]
     public async Task<ActionResult<List<GetMilkingRecord>>> GetPaged(int page = 1, int size = 10)
     {
-        return await service.GetMilkingRecordsAsync(page, size);
+        return await service.GetMilkingSessionsAsync(page, size);
     }
 }
