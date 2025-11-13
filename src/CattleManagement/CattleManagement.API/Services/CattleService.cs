@@ -1,5 +1,6 @@
 ﻿using CattleManagement.API.DTOs;
 using CattleManagement.API.Events;
+using CattleManagement.API.HostedServices;
 using CattleManagement.API.Models;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Results;
@@ -36,6 +37,10 @@ public sealed class CattleService(AppDbContext context, CattleKafkaProducerServi
         };
         await _context.Cattles.AddAsync(cattle);
         await _context.SaveChangesAsync();
+
+        // Publish creation event
+        CattleCreatedEvent @event = new(cattle.Id, cattle.TagNumber, cattle.DateOfBirth);
+        await _producer.ProduceAsync(cattle.Id.ToString(), @event);
         return cattle;
     }
     public async Task<Result> DeleteAsync(Guid id)
@@ -49,8 +54,8 @@ public sealed class CattleService(AppDbContext context, CattleKafkaProducerServi
         await _context.SaveChangesAsync();
 
         // Publish deletion event
-        CattleDeleteEvent @event = new(id, DateTime.UtcNow);
-        await _producer.ProduceAsync(id.ToString(), @event);
+        CattleDeletedEvent @event = new(cattle.Id, cattle.TagNumber);
+        await _producer.ProduceAsync(cattle.Id.ToString(), @event);
         
         return Result.Success();
     }
@@ -73,6 +78,10 @@ public sealed class CattleService(AppDbContext context, CattleKafkaProducerServi
         cattle.DateOfBirth = request.DateOfBirth;
         _context.Cattles.Update(cattle);
         await _context.SaveChangesAsync();
+
+        // Publish update event
+        CattleUpdatedEvent @event = new(cattle.Id, cattle.TagNumber, cattle.DateOfBirth);
+        await _producer.ProduceAsync(cattle.Id.ToString(), @event);
         return cattle;
     }
 }

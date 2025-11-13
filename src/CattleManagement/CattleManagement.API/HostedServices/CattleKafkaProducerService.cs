@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
-namespace CattleManagement.API.Events;
+namespace CattleManagement.API.HostedServices;
 
 public sealed class CattleKafkaProducerService(
     IProducer<string, string> producer,
@@ -11,13 +11,14 @@ public sealed class CattleKafkaProducerService(
 {
     private readonly KafkaSettings _kafkaSettings = kafkaSettings.Value;
 
-    public async Task ProduceAsync(string key, object value, CancellationToken ct = default)
+    public async Task ProduceAsync<T>(string key, T value, CancellationToken ct = default)
+        where T : notnull
     {
         string topic = _kafkaSettings.Topics.CattleEvents;
         try
         {
-            string jsonValue = JsonSerializer.Serialize(value);
-            Message<string, string> msg = new() { Key = key, Value = jsonValue };
+            string payload = JsonSerializer.Serialize(value);
+            Message<string, string> msg = new() { Key = key, Value = payload };
             DeliveryResult<string, string> result = await producer.ProduceAsync(topic, msg, ct);
             logger.LogInformation("Produced message to topic {Topic}: {Key} - {Value}", topic, key, value);
         }

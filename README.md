@@ -5,35 +5,51 @@ Each service is container-ready and leverages resilient, scalable patterns for c
 Each microservice has its own database context and exposes its API using Scalar for efficient, strongly-typed queries and commands.
 
 ## Kafka Integration
-The CattleManagement.API acts as the producer and emits a CattleDeletedEvent to a Kafka topic (for example cattle.updates); MilkingYield.API is the consumer and subscribes to that topic to react when a cattle record is deleted (delete or archive related milking-yield records, maintain referential integrity, emit compensating events, etc.).
 
-- Producer: `CattleManagement.API`
-    - Publishes `CattleDeletedEvent` to a configured topic (example: `cattle.updates` or `cattle.deleted`).
-    - Typical event payload:
+## Kafka Integration
+
+OptiMilk uses Kafka for lightweight eventing and eventual consistency between services.
+
+Core points
+- Topic topology:
+  - `CattleEvents` — cattle lifecycle events (created, updated, deleted).
+  - `MilkingEvents` — (reserved) events related to milking sessions (name available in config).
+- Service responsibilities:
+  - `CattleManagement.API` publishes cattle lifecycle events using the Kafka producer integration (`AddKafkaProducer`).
+  - `MilkingYield.API` subscribes to cattle events using the Kafka consumer integration (`AddKafkaConsumer`) and reacts (e.g., to synchronize caches or trigger downstream processing).
+- Configuration:
+  - The integration expects a `Kafka` configuration section with the following properties:
+    - `BootstrapServers` (comma-separated list, e.g. `kafka:29092` or `localhost:9092`)
+    - `GroupId` (consumer group id)
+    - `AutoOffsetReset` (e.g. `Earliest` | `Latest`)
+    - `Topics` with `CattleEvents` and `MilkingEvents`
+- Message contract (recommended JSON shape)
+  - Cattle created example:
   ```json
-  {
-    "CattleId": "00000000-0000-0000-0000-000000000000",
-    "DeletedAt": "2025-11-13T12:00:00Z",
-    "DeletedBy": "user@example.com",
-    "Reason": "Deceased"
-  }
-
-### Sumarized Flow
-**Key points:**
-
-- **Producer**: CattleManagement.API
-- **Publishes CattleDeletedEvent**: (key = cattle id) to a configured topic (for example cattle.updates or cattle.deleted).
-- **Event payload**: typically includes CattleId, DeletedAt, optional Reason and DeletedBy.
-- Configure broker via KAFKA_BOOTSTRAP_SERVERS and topic name via a config key (for example CATTLE_UPDATE_TOPIC).
-- Consumer: MilkingYield.API
-- Subscribes using a consumer group (for example milkingyield-consumer-group).
-- On receipt of CattleDeletedEvent it should:
-- Validate and deserialize the event.
-- Check idempotency (skip if already handled).
-- Soft-delete or remove all related milking-yield records, or mark them as orphaned/archived.
-- Persist changes in a transaction and optionally publish follow-up events.
-- Handle transient failures with retries and send failing messages to a dead-letter topic.
-
+    {
+      "EventType": "CattleCreated",
+      "TimestampUtc": "2025-11-13T12:00:00Z",
+      "Payload": {
+        "Id": "019a5b08-9dcb-784d-8107-923f2907dde5",
+        "TagNumber": "A123",
+        "Breed": "Angus",
+        "DateOfBirth": "2020-05-15"
+      }
+    }
+   ```
+  - Milking session example:
+  ```json
+    {
+      "EventType": "MilkingSessionCreated",
+      "TimestampUtc": "2025-11-13T12:05:00Z",
+      "Payload": {
+        "Id": "d3f9c8a1-... ",
+        "CowId": "019a5b08-9dcb-784d-8107-923f2907dde5",
+        "YieldInLiters": 12.5,
+        "RecordedAt": "2025-11-13T08:00:00Z"
+      }
+    }
+  ``` 
 
 ## Microservices Overview
 

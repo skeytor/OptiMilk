@@ -1,4 +1,4 @@
-﻿namespace CattleManagement.API.Events;
+﻿namespace CattleManagement.API.HostedServices;
 
 public class KafkaSettings
 {

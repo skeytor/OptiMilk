@@ -1,5 +1,6 @@
-﻿using CattleManagement.API.Events;
+﻿using CattleManagement.API.HostedServices;
 using Confluent.Kafka;
+using Microsoft.Extensions.Options;
 
 namespace CattleManagement.API.Extensions;
 
@@ -10,14 +11,12 @@ internal static class KafkaExtentions
         IConfiguration configuration)
     {
         services.Configure<KafkaSettings>(configuration.GetSection("Kafka"));
-        var bootstrap = configuration["Kafka:BootstrapServers"]
-                    ?? configuration.GetValue<string>("KAFKA:BOOTSTRAP_SERVERS")
-                    ?? "localhost:9092";
         services.AddSingleton(sp =>
         {
+            KafkaSettings settings = sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
             ProducerConfig config = new()
             {
-                BootstrapServers = bootstrap,
+                BootstrapServers = settings.BootstrapServers,
             };
             return new ProducerBuilder<string, string>(config).Build();
         });
