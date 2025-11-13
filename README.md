@@ -3,6 +3,38 @@
 This solution consists of two .NET 9 microservices designed for modern cattle management and milking yield analytics. 
 Each service is container-ready and leverages resilient, scalable patterns for cloud deployment.
 Each microservice has its own database context and exposes its API using Scalar for efficient, strongly-typed queries and commands.
+
+## Kafka Integration
+The CattleManagement.API acts as the producer and emits a CattleDeletedEvent to a Kafka topic (for example cattle.updates); MilkingYield.API is the consumer and subscribes to that topic to react when a cattle record is deleted (delete or archive related milking-yield records, maintain referential integrity, emit compensating events, etc.).
+
+- Producer: `CattleManagement.API`
+    - Publishes `CattleDeletedEvent` to a configured topic (example: `cattle.updates` or `cattle.deleted`).
+    - Typical event payload:
+  ```json
+  {
+    "CattleId": "00000000-0000-0000-0000-000000000000",
+    "DeletedAt": "2025-11-13T12:00:00Z",
+    "DeletedBy": "user@example.com",
+    "Reason": "Deceased"
+  }
+
+### Sumarized Flow
+**Key points:**
+
+- **Producer**: CattleManagement.API
+- **Publishes CattleDeletedEvent**: (key = cattle id) to a configured topic (for example cattle.updates or cattle.deleted).
+- **Event payload**: typically includes CattleId, DeletedAt, optional Reason and DeletedBy.
+- Configure broker via KAFKA_BOOTSTRAP_SERVERS and topic name via a config key (for example CATTLE_UPDATE_TOPIC).
+- Consumer: MilkingYield.API
+- Subscribes using a consumer group (for example milkingyield-consumer-group).
+- On receipt of CattleDeletedEvent it should:
+- Validate and deserialize the event.
+- Check idempotency (skip if already handled).
+- Soft-delete or remove all related milking-yield records, or mark them as orphaned/archived.
+- Persist changes in a transaction and optionally publish follow-up events.
+- Handle transient failures with retries and send failing messages to a dead-letter topic.
+
+
 ## Microservices Overview
 
 ### 1. CattleManagement.API
