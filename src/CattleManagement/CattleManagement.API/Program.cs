@@ -1,4 +1,3 @@
-using CattleManagement.API.Events;
 using CattleManagement.API.Extensions;
 using CattleManagement.API.Services;
 using Scalar.AspNetCore;
