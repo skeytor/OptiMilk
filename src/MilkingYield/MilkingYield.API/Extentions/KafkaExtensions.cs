@@ -1,27 +1,32 @@
 ﻿using Confluent.Kafka;
+using MilkingYield.API.Events;
 using MilkingYield.API.Services;
 
 namespace MilkingYield.API.Extentions;
 
 internal static class KafkaExtensions
 {
-    internal static IServiceCollection AddKafkaProducer(
+    internal static IServiceCollection AddKafkaConsumer(
         this IServiceCollection services, 
         IConfiguration configuration)
     {
-        var bootstrap = configuration.GetValue<string>("Kafka:BootstrapServers")
-                    ?? configuration.GetValue<string>("KAFKA:BOOTSTRAP_SERVERS")
-                    ?? "localhost:9092";
-        // Kafka producer registration
+        // Kafka consumer registration
         services.AddSingleton(sp =>
         {
-            var config = new ProducerConfig { BootstrapServers = bootstrap };
-            return new ProducerBuilder<string, string>(config).Build();
+            var kafkaSettings = sp.GetRequiredService<KafkaSettings>();
+            var producerConfig = new ConsumerConfig
+            {
+                BootstrapServers = kafkaSettings.BootstrapServers,
+                GroupId = kafkaSettings.GroupId,
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                EnableAutoCommit = false,
+                EnablePartitionEof = true,
+            };
+            return new ConsumerBuilder<string, string>(producerConfig).Build();
         });
-        services.AddSingleton<KafkaProducerService>();
 
         // Kafka consumer background service (subscribes to "test-topic")
-        services.AddHostedService<KafkaConsumerBackgroundService>();
+        services.AddHostedService<MilkingYieldConsumerBackgroundService>();
         return services;
     }
 }

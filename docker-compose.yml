@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: src/CattleManagement/CattleManagement.API/Dockerfile
-    container_name: cattlemanagement-api-service
+    container_name: cattlemanagement.api
     depends_on:
       - cattlemanagement.db
       - kafka
@@ -23,7 +23,7 @@ services:
       - cattlemanagement_data:/var/opt/mssql
     ports:
       - "1433:1433"
-    container_name: cattlemanagement-db-service
+    container_name: cattlemanagement.db
     restart: unless-stopped
 
   milkingyield.api:
@@ -31,7 +31,7 @@ services:
     build:
       context: .
       dockerfile: src/MilkingYield/MilkingYield.API/Dockerfile
-    container_name: milkingyield-api-service
+    container_name: milkingyield.api
     depends_on:
       - milkingyield.db
       - kafka
@@ -42,7 +42,7 @@ services:
 
   milkingyield.db:
     image: postgres:latest
-    container_name: milkingyield-db-service
+    container_name: milkingyield.db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -65,14 +65,14 @@ services:
 
   zookeeper:
     image:  confluentinc/cp-zookeeper:7.9.4
-    container_name: zookeeper-service
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
     image: confluentinc/cp-kafka:7.9.4
-    container_name: kafka-broker
+    container_name: kafka
     depends_on:
       - zookeeper
     environment:

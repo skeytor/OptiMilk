@@ -1,3 +1,4 @@
+using CattleManagement.API.Events;
 using CattleManagement.API.Extensions;
 using CattleManagement.API.Services;
 using Scalar.AspNetCore;
@@ -6,8 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDatabaseProvider(builder.Configuration);
-
-builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("Kafka"));
 
 builder.Services.AddKafkaProducer(builder.Configuration);
 

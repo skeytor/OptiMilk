@@ -89,6 +89,21 @@ public sealed class MilkingSessionService(CattleApiClient client, AppDbContext c
         await _context.SaveChangesAsync();
         return Result.Success(milkingRecordId);
     }
+    public async Task<Result> DeleteByCowIdAsync(Guid cowId)
+    {
+        List<MilkingRecord> records = await _context.MilkingYields
+            .Where(m => m.CowId == cowId)
+            .ToListAsync();
+        if (records.Count == 0)
+        {
+            return Result.Failure(Error.NotFound(
+                "MilkingRecord.NotFound",
+                $"Milking record for Cattle ID {cowId} does not exist"));
+        }
+        _context.MilkingYields.RemoveRange(records);
+        await _context.SaveChangesAsync();
+        return Result.Success();
+    }
     public async Task<Result> UpdateAsync(Guid milkingRecordId, UpdateMilkingSessionRequest request)
     {
         MilkingRecord? record = await _context.MilkingYields

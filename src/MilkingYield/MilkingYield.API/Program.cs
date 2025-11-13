@@ -13,7 +13,7 @@ builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("Kafk
 builder.Services.AddPollyPolicies(builder.Configuration);
 
 // Add Kafka producer and consumer services
-builder.Services.AddKafkaProducer(builder.Configuration);
+builder.Services.AddKafkaConsumer(builder.Configuration);
 
 builder.Services.AddScoped<MilkingSessionService>();
 

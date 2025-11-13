@@ -1,13 +1,15 @@
 ﻿using CattleManagement.API.DTOs;
+using CattleManagement.API.Events;
 using CattleManagement.API.Models;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Results;
 
 namespace CattleManagement.API.Services;
 
-public sealed class CattleService(AppDbContext context)
+public sealed class CattleService(AppDbContext context, CattleKafkaProducerService producer)
 {
     private readonly AppDbContext _context = context;
+    private readonly CattleKafkaProducerService _producer = producer;
 
     public async Task<Result<Cattle>> GetCattleByIdAsync(Guid id, CancellationToken ct = default) 
     {
@@ -45,6 +47,11 @@ public sealed class CattleService(AppDbContext context)
         }
         _context.Cattles.Remove(cattle);
         await _context.SaveChangesAsync();
+
+        // Publish deletion event
+        CattleDeleteEvent @event = new(id, DateTime.UtcNow);
+        await _producer.ProduceAsync(id.ToString(), @event);
+        
         return Result.Success();
     }
     public async Task<Result<Cattle>> UpdateAsync(Guid id, UpdateCattleRequest request)
