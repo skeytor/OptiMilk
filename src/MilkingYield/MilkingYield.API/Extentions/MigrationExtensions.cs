@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MilkingYield.API.Data;
+using MilkingYield.API.Models;
 
 namespace MilkingYield.API.Extentions;
 
@@ -22,5 +24,18 @@ internal static class MigrationExtensions
             logger.LogError(ex, "An error occurred while migrating or seeding the database.");
         }
         return app;
+    }
+    internal static IServiceCollection AddDatabaseProvider(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddDbContext<AppDbContext>(
+            options => options.UseNpgsql(configuration.GetConnectionString("MilkingYieldDatabase"))
+            .UseSeeding((context, _) =>
+            {
+                context.Set<MilkingRecord>().AddRange(SampleData.MilkingYields);
+                context.SaveChanges();
+            }));
+        return services;
     }
 }

@@ -64,36 +64,47 @@ services:
     restart: unless-stopped
 
   zookeeper:
-    image: bitnami/zookeeper:latest
+    image:  confluentinc/cp-zookeeper:7.9.4
     container_name: zookeeper-service
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    ports:
-      - "2181:2181"
-    volumes:
-      - zookeeper_data:/bitnami
-    restart: unless-stopped
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: bitnami/kafka:latest
-    container_name: kafka-service
+    image: confluentinc/cp-kafka:7.9.4
+    container_name: kafka-broker
     depends_on:
       - zookeeper
     environment:
       - KAFKA_BROKER_ID=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
     ports:
       - "9092:9092"
-    volumes:
-      - kafka_data:/bitnami
     restart: unless-stopped
+
+  kafka-init:
+    depends_on:
+      - kafka
+    image: confluentinc/cp-kafka:7.9.4
+    container_name: kafka-init
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "
+      echo 'Waiting for Kafka to be ready...';
+      kafka-topics --bootstrap-server kafka:29092 --list;
+      echo 'Creating topics...';
+      kafka-topics --create --topic cattle-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092;
+      kafka-topics --create --topic milking-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092;
+      echo 'Topics created.';
+      kafka-topics --bootstrap-server kafka:29092 --list;
+      "
 
 volumes:
   cattlemanagement_data:
   milkingyield_data:
-  zookeeper_data:
-  kafka_data:
 
