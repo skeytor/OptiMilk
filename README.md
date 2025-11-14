@@ -7,14 +7,9 @@ Each microservice has its own database context and exposes its API using Scalar 
 Before starting, the git repository has three branches called `main`, `exercise-1-circuit-braker` and `exercise-2-kafka`
 Please check the branches `exercise-1-circuit-braker` and `exercise-2-kafka` to see the implementation of Circuit Breaker and Kafka Integration respectively.
 
-Execute the following command to see the repository branches:
-```bash
-git branch -a
-```
-And switch to the desired branch using:
-```bash
-git checkout exercise-2-kafka
-```
+For more details, please refer to the following branches:
+- [Branch - Exercise 1: Circuit Braker](https://github.com/skeytor/OptiMilk/tree/exercise-1-circuit-braker)
+- [Branch - Exercise 2: Kafka Integration](https://github.com/skeytor/OptiMilk/tree/exercise-2-kafka)
 
 ## Get Started
 To run the microservices locally, ensure you have Docker installed and execute the provided Docker Compose file. Each service will be accessible via its designated ports.
@@ -22,8 +17,6 @@ To run the microservices locally, ensure you have Docker installed and execute t
 1. **Clone the repository.**
 - ```bash
    git clone https://github.com/skeytor/OptiMilk
-   git branch
-   git checkout exercise-2-kafka
   ```
 2. **Run Docker Compose:**
    ```bash
