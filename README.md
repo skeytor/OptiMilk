@@ -16,6 +16,38 @@ And switch to the desired branch using:
 git checkout exercise-1-circuit-braker
 ```
 
+## Get Started
+To run the microservices locally, ensure you have Docker installed and execute the provided Docker Compose file. Each service will be accessible via its designated ports.
+
+1. **Clone the repository.**
+- ```bash
+   git clone https://github.com/skeytor/OptiMilk
+   git branch
+   git checkout exercise-1-circuit-braker
+  ```
+2. **Run Docker Compose:**
+   ```bash
+   docker-compose up --build
+   ```
+3. **Access the APIs:**
+   - Cattle Management API: `http://localhost:8080/scalar/v1`
+   - Milking Yield API: `http://localhost:5000/scalar/v1`
+   - Load Balancer for Milking Yield API: `http://localhost/api/MilkingYield`
+
+For further details, refer to each microservice's documentation and source code.
+
+## API Exposure
+
+Both microservices expose their APIs using Scalar, enabling efficient, strongly-typed queries and commands. This approach supports modern CQRS patterns and high-performance data access.
+
+[Cattle Management API Docs](http://localhost:8080/scalar/v1#tag/cattle/get/api/Cattle)
+
+[Milking Yield API Docs](http://localhost:5000/scalar/v1#tag/milkingyield/get/api/MilkingYield)
+
+Furthemore we can access to the Milking Yield API through Load Balancer at: [Load Balancer URL](http://localhost/api/MilkingYield)
+
+
+
 ## Kafka Integration
 
 OptiMilk uses Kafka for lightweight eventing and eventual consistency between services.
