@@ -4,13 +4,6 @@ This solution consists of two .NET 9 microservices designed for modern cattle ma
 Each service is container-ready and leverages resilient, scalable patterns for cloud deployment.
 Each microservice has its own database context and exposes its API using Scalar for efficient, strongly-typed queries and commands.
 
-Before starting, the git repository has three branches called `main`, `exercise-1-circuit-braker` and `exercise-2-kafka`
-Please check the branches `exercise-1-circuit-braker` and `exercise-2-kafka` to see the implementation of Circuit Breaker and Kafka Integration respectively.
-
-For more details, please refer to the following branches:
-- [Branch - Exercise 1: Circuit Braker](https://github.com/skeytor/OptiMilk/tree/exercise-1-circuit-braker)
-- [Branch - Exercise 2: Kafka Integration](https://github.com/skeytor/OptiMilk/tree/exercise-2-kafka)
-
 ## Get Started
 To run the microservices locally, ensure you have Docker installed and execute the provided Docker Compose file. Each service will be accessible via its designated ports.
 
