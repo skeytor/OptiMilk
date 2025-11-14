@@ -2,4 +2,4 @@
 
 public sealed record CattleDeletedEvent(
     Guid CattleId,
-    DateTime DeletedAt);
+    string EventType);

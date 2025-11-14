@@ -1,18 +1,21 @@
 ﻿using System.Text.Json;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
+using MilkingYield.API.Handlers;
 using MilkingYield.API.Services;
 
 namespace MilkingYield.API.Events;
 
 public class MilkingYieldConsumerBackgroundService(
     ILogger<MilkingYieldConsumerBackgroundService> logger,
-    MilkingSessionService milkingSessionService,
     IConsumer<string, string> consumer,
+    IEnumerable<IKafkaEventHandler> eventHandlers,
     IOptions<KafkaSettings> options)
     : BackgroundService
 {
     private readonly KafkaSettings _kafkaSettings = options.Value;
+    private readonly Dictionary<string, IKafkaEventHandler> _eventHandlerMap =
+        eventHandlers.ToDictionary(h => h.EventType, h => h);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -25,33 +28,12 @@ public class MilkingYieldConsumerBackgroundService(
             {
                 try
                 {
-                    var cr = consumer.Consume(stoppingToken);
+                    ConsumeResult<string, string> cr = consumer.Consume(stoppingToken);
                     if (cr?.Message.Value is null)
                     {
                         continue;
                     }
-                    CattleDeletedEvent? evt = null;
-                    try
-                    {
-                        evt = JsonSerializer.Deserialize<CattleDeletedEvent>(cr.Message.Value);
-                    }
-                    catch (JsonException jex)
-                    {
-                        logger.LogError(jex, "Failed to deserialize message value");
-                    }
-                    
-                    if (evt != null)
-                    {
-                        await milkingSessionService.DeleteByCowIdAsync(evt.CattleId);
-                        consumer.Commit(cr); // commit after successful processing
-                    }
-                    else
-                    {
-                        // Optionally commit or move to dead-letter handling
-                        consumer.Commit(cr);
-                    }
-                    logger.LogInformation("Received message: {Key} => {Value} at {Offset}", cr.Message.Key, cr.Message.Value, cr.TopicPartitionOffset);
-                    consumer.Commit(cr);
+                    await ProcessMessageAsync(cr, stoppingToken);
                 }
                 catch (ConsumeException ce)
                 {
@@ -59,11 +41,47 @@ public class MilkingYieldConsumerBackgroundService(
                 }
             }
         }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException) 
+        { 
+            logger.LogInformation("Kafka consumer cancellation requested");
+        }
         finally
         {
             consumer.Close();
             logger.LogInformation("Kafka consumer stopped");
+        }
+    }
+    private async Task ProcessMessageAsync(ConsumeResult<string, string> cr, CancellationToken ct)
+    {
+        try
+        {
+            string message = cr.Message.Value;
+            JsonDocument jsonDoc = JsonDocument.Parse(message);
+            if (jsonDoc.RootElement.TryGetProperty("EventType", out var eventTypeElement))
+            {
+                string? eventType = eventTypeElement.GetString();
+                if (eventType is not null && _eventHandlerMap.TryGetValue(eventType, out var handler))
+                {
+                    await handler.HandleAsync(message, ct);
+                    logger.LogInformation("Processed message with EventType: {EventType}", eventType);
+                }
+                else
+                {
+                    logger.LogWarning("No handler found for EventType: {EventType}", eventType);
+                }
+            }
+            else
+            {
+                logger.LogWarning("EventType property not found in message");
+            }
+        }
+        catch (JsonException je)
+        {
+            logger.LogError(je, "JSON parsing error");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error processing message");
         }
     }
 }
