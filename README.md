@@ -4,7 +4,17 @@ This solution consists of two .NET 9 microservices designed for modern cattle ma
 Each service is container-ready and leverages resilient, scalable patterns for cloud deployment.
 Each microservice has its own database context and exposes its API using Scalar for efficient, strongly-typed queries and commands.
 
-## Kafka Integration
+Before starting, the git repository has three branches called `main`, `exercise-1-circuit-braker` and `exercise-2-kafka`
+Please check the branches `exercise-1-circuit-braker` and `exercise-2-kafka` to see the implementation of Circuit Breaker and Kafka Integration respectively.
+
+Execute the following command to see the repository branches:
+```bash
+git branch -a
+```
+And switch to the desired branch using:
+```bash
+git checkout exercise-2-kafka
+```
 
 ## Kafka Integration
 
