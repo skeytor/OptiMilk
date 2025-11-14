@@ -11,8 +11,6 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
-    environment:
-      - KAFKA__BOOTSTRAP_SERVERS=kafka:9092
 
   cattlemanagement.db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -21,8 +19,8 @@ services:
       - MSSQL_SA_PASSWORD=P@ssword123
     volumes:
       - cattlemanagement_data:/var/opt/mssql
-    expose:
-      - "1433"
+    ports:
+      - "1433:1433"
     container_name: cattlemanagement.db
     restart: unless-stopped
 
@@ -32,25 +30,24 @@ services:
       context: .
       dockerfile: src/MilkingYield/MilkingYield.API/Dockerfile
     container_name: milkingyield.api
+    restart: unless-stopped
     depends_on:
       - milkingyield.db
       - kafka
     ports:
       - "5000:5000"
-    environment:
-      - KAFKA__BOOTSTRAP_SERVERS=kafka:9092
 
   milkingyield.db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=P@ssword123
-    volumes:
-      - milkingyield_data:/var/opt/mssql
-    expose:
-      - "1433"
+    image: postgres:17
     container_name: milkingyield.db
-    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: milkingdb
+    volumes:
+      - milkingyield_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   nginx:
     image: nginx:latest
