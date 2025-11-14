@@ -26,7 +26,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference(options => options.Servers = []);
-    app.ApplyMigrations();
+    await app.ApplyMigrations();
 }
 
 //app.UseHttpsRedirection();

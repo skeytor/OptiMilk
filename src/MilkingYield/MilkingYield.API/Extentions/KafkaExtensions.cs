@@ -29,7 +29,7 @@ internal static class KafkaExtensions
         });
 
         // Kafka consumer background service (subscribes to the topic)
-        //services.AddHostedService<MilkingYieldConsumerBackgroundService>();
+        services.AddHostedService<MilkingYieldConsumerBackgroundService>();
         return services;
     }
 }
