@@ -3,6 +3,64 @@
 This solution consists of two .NET 9 microservices designed for modern cattle management and milking yield analytics. 
 Each service is container-ready and leverages resilient, scalable patterns for cloud deployment.
 Each microservice has its own database context and exposes its API using Scalar for efficient, strongly-typed queries and commands.
+
+Before starting, the git repository has three branches called `main`, `exercise-1-circuit-braker` and `exercise-2-kafka`
+Please check the branches `exercise-1-circuit-braker` and `exercise-2-kafka` to see the implementation of Circuit Breaker and Kafka Integration respectively.
+
+Execute the following command to see the repository branches:
+```bash
+git branch -a
+```
+And switch to the desired branch using:
+```bash
+git checkout exercise-2-kafka
+```
+
+## Kafka Integration
+
+OptiMilk uses Kafka for lightweight eventing and eventual consistency between services.
+
+Core points
+- Topic topology:
+  - `CattleEvents` — cattle lifecycle events (created, updated, deleted).
+  - `MilkingEvents` — (reserved) events related to milking sessions (name available in config).
+- Service responsibilities:
+  - `CattleManagement.API` publishes cattle lifecycle events using the Kafka producer integration (`AddKafkaProducer`).
+  - `MilkingYield.API` subscribes to cattle events using the Kafka consumer integration (`AddKafkaConsumer`) and reacts (e.g., to synchronize caches or trigger downstream processing).
+- Configuration:
+  - The integration expects a `Kafka` configuration section with the following properties:
+    - `BootstrapServers` (comma-separated list, e.g. `kafka:29092` or `localhost:9092`)
+    - `GroupId` (consumer group id)
+    - `AutoOffsetReset` (e.g. `Earliest` | `Latest`)
+    - `Topics` with `CattleEvents` and `MilkingEvents`
+- Message contract (recommended JSON shape)
+  - Cattle created example:
+  ```json
+    {
+      "EventType": "CattleCreated",
+      "TimestampUtc": "2025-11-13T12:00:00Z",
+      "Payload": {
+        "Id": "019a5b08-9dcb-784d-8107-923f2907dde5",
+        "TagNumber": "A123",
+        "Breed": "Angus",
+        "DateOfBirth": "2020-05-15"
+      }
+    }
+   ```
+  - Milking session example:
+  ```json
+    {
+      "EventType": "MilkingSessionCreated",
+      "TimestampUtc": "2025-11-13T12:05:00Z",
+      "Payload": {
+        "Id": "d3f9c8a1-... ",
+        "CowId": "019a5b08-9dcb-784d-8107-923f2907dde5",
+        "YieldInLiters": 12.5,
+        "RecordedAt": "2025-11-13T08:00:00Z"
+      }
+    }
+  ``` 
+
 ## Microservices Overview
 
 ### 1. CattleManagement.API
