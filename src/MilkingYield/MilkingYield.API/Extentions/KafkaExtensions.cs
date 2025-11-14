@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
-using MilkingYield.API.Events;
-using MilkingYield.API.Services;
+using Microsoft.Extensions.Options;
+using MilkingYield.API.Handlers;
+using MilkingYield.API.HostedServices;
 
 namespace MilkingYield.API.Extentions;
 
@@ -10,14 +11,16 @@ internal static class KafkaExtensions
         this IServiceCollection services, 
         IConfiguration configuration)
     {
+        services.AddScoped<IKafkaEventHandler, CattleDeletedEventHandler>();
+        services.Configure<KafkaSettings>(configuration.GetSection("Kafka"));
         // Kafka consumer registration
         services.AddSingleton(sp =>
         {
-            var kafkaSettings = sp.GetRequiredService<KafkaSettings>();
+            KafkaSettings settings = sp.GetRequiredService<IOptions<KafkaSettings>>().Value;
             var producerConfig = new ConsumerConfig
             {
-                BootstrapServers = kafkaSettings.BootstrapServers,
-                GroupId = kafkaSettings.GroupId,
+                BootstrapServers = settings.BootstrapServers,
+                GroupId = settings.GroupId,
                 AutoOffsetReset = AutoOffsetReset.Earliest,
                 EnableAutoCommit = false,
                 EnablePartitionEof = true,

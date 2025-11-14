@@ -1,4 +1,4 @@
-﻿namespace MilkingYield.API.Services;
+﻿namespace MilkingYield.API.HostedServices;
 
 public class KafkaSettings
 {

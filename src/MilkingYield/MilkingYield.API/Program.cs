@@ -7,8 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDatabaseProvider(builder.Configuration);
 
-builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("Kafka"));
-
 // Add Polly policies for HttpClient resilience
 builder.Services.AddPollyPolicies(builder.Configuration);
 
