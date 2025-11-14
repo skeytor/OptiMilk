@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MilkingYield.API.Clients;
 using MilkingYield.API.Data;
 using MilkingYield.API.Models;
 
@@ -29,9 +30,9 @@ internal static class MigrationExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<AppDbContext>(
-            options => options.UseNpgsql(configuration.GetConnectionString("MilkingYieldDatabase"))
-            .UseSeeding((context, _) =>
+        services.AddSqlServer<AppDbContext>(
+            configuration.GetConnectionString("MilkingYieldDatabase"),
+            optionsAction: (options) => options.UseSeeding((context, _) =>
             {
                 context.Set<MilkingRecord>().AddRange(SampleData.MilkingYields);
                 context.SaveChanges();
