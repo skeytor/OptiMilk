@@ -12,6 +12,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/CattleManagement/CattleManagement.API/CattleManagement.API.csproj", "src/CattleManagement/CattleManagement.API/"]
+COPY ["src/SharedKernel/SharedKernel.csproj", "src/SharedKernel/"]
 RUN dotnet restore "./src/CattleManagement/CattleManagement.API/CattleManagement.API.csproj"
 COPY . .
 WORKDIR "/src/src/CattleManagement/CattleManagement.API"
