@@ -1,8 +1,6 @@
-﻿using MilkingYield.API.Models;
+﻿namespace MilkingYield.API.Clients;
 
-namespace MilkingYield.API.Clients;
-
-public class CattleApiClient(HttpClient httpClient)
+public sealed class CattleApiClient(HttpClient httpClient)
 {
     private readonly HttpClient _httpClient = httpClient;
     public async Task<bool> CattleExistsAsync(Guid cattleId, CancellationToken cancellationToken = default)

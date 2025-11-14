@@ -13,7 +13,7 @@ git branch -a
 ```
 And switch to the desired branch using:
 ```bash
-git checkout exercise-1-circuit-braker
+git checkout exercise-2-kafka
 ```
 
 ## Get Started
@@ -23,7 +23,7 @@ To run the microservices locally, ensure you have Docker installed and execute t
 - ```bash
    git clone https://github.com/skeytor/OptiMilk
    git branch
-   git checkout exercise-1-circuit-braker
+   git checkout exercise-2-kafka
   ```
 2. **Run Docker Compose:**
    ```bash
@@ -53,8 +53,8 @@ OptiMilk uses Kafka for lightweight eventing and eventual consistency between se
 
 Core points
 - Topic topology:
-  - `CattleEvents` — cattle lifecycle events (created, updated, deleted).
-  - `MilkingEvents` — (reserved) events related to milking sessions (name available in config).
+  - `CattleEvents` � cattle lifecycle events (created, updated, deleted).
+  - `MilkingEvents` � (reserved) events related to milking sessions (name available in config).
 - Service responsibilities:
   - `CattleManagement.API` publishes cattle lifecycle events using the Kafka producer integration (`AddKafkaProducer`).
   - `MilkingYield.API` subscribes to cattle events using the Kafka consumer integration (`AddKafkaConsumer`) and reacts (e.g., to synchronize caches or trigger downstream processing).

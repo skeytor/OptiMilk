@@ -1,45 +1,17 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Http.Resilience;
-using MilkingYield.API;
-using MilkingYield.API.Clients;
-using MilkingYield.API.Data;
 using MilkingYield.API.Extentions;
-using MilkingYield.API.Models;
 using MilkingYield.API.Services;
-using Polly;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(
-    options => options.UseNpgsql(builder.Configuration.GetConnectionString("MilkingYieldDatabase"))
-    .UseSeeding((context, _) =>
-    {
-        context.Set<MilkingRecord>().AddRange(SampleData.MilkingYields);
-        context.SaveChanges();
-    }));
+builder.Services.AddDatabaseProvider(builder.Configuration);
 
-builder.Services.AddHttpClient<CattleApiClient>(
-    client => client.BaseAddress = new Uri(builder.Configuration["CattleApi:BaseUrl"]!))
-    .AddResilienceHandler("custom", pipeline =>
-    {
-        pipeline.AddTimeout(TimeSpan.FromSeconds(5));
-        pipeline.AddRetry(new HttpRetryStrategyOptions
-        {
-            MaxRetryAttempts = 3,
-            BackoffType = DelayBackoffType.Exponential,
-            UseJitter = true
-        });
-        pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
-        {
-            SamplingDuration = TimeSpan.FromSeconds(10),
-            FailureRatio = 0.9,
-            MinimumThroughput = 5,
-            BreakDuration = TimeSpan.FromSeconds(5)
-        });
-        pipeline.AddTimeout(TimeSpan.FromSeconds(1));
-    });
+// Add Polly policies for HttpClient resilience
+builder.Services.AddPollyPolicies(builder.Configuration);
+
+// Add Kafka producer and consumer services
+builder.Services.AddKafkaConsumer(builder.Configuration);
 
 builder.Services.AddScoped<MilkingSessionService>();
 

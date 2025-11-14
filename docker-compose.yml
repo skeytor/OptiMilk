@@ -4,12 +4,15 @@ services:
     build:
       context: .
       dockerfile: src/CattleManagement/CattleManagement.API/Dockerfile
-    container_name: cattlemanagement-api-service
+    container_name: cattlemanagement.api
     depends_on:
       - cattlemanagement.db
+      - kafka
     restart: unless-stopped
     ports:
-        - "8080:8080"
+      - "8080:8080"
+    environment:
+      - KAFKA__BOOTSTRAP_SERVERS=kafka:9092
 
   cattlemanagement.db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -20,7 +23,7 @@ services:
       - cattlemanagement_data:/var/opt/mssql
     ports:
       - "1433:1433"
-    container_name: cattlemanagement-db-service
+    container_name: cattlemanagement.db
     restart: unless-stopped
 
   milkingyield.api:
@@ -28,23 +31,26 @@ services:
     build:
       context: .
       dockerfile: src/MilkingYield/MilkingYield.API/Dockerfile
-    container_name: milkingyield-api-service
+    container_name: milkingyield.api
     depends_on:
       - milkingyield.db
+      - kafka
     ports:
-        - "5000:5000"
+      - "5000:5000"
+    environment:
+      - KAFKA__BOOTSTRAP_SERVERS=kafka:9092
 
   milkingyield.db:
     image: postgres:latest
-    container_name: milkingyield-db-service
+    container_name: milkingyield.db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: milkingdb
     volumes:
-        - milkingyield_data:/var/lib/data
+      - milkingyield_data:/var/lib/data
     ports:
-        - "5432:5432"
+      - "5432:5432"
 
   nginx:
     image: nginx:latest
@@ -57,7 +63,48 @@ services:
       - milkingyield.api
     restart: unless-stopped
 
+  zookeeper:
+    image:  confluentinc/cp-zookeeper:7.9.4
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.9.4
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+    ports:
+      - "9092:9092"
+    restart: unless-stopped
+
+  kafka-init:
+    depends_on:
+      - kafka
+    image: confluentinc/cp-kafka:7.9.4
+    container_name: kafka-init
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "
+      echo 'Waiting for Kafka to be ready...';
+      kafka-topics --bootstrap-server kafka:29092 --list;
+      echo 'Creating topics...';
+      kafka-topics --create --topic cattle-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092;
+      kafka-topics --create --topic milking-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092;
+      echo 'Topics created.';
+      kafka-topics --bootstrap-server kafka:29092 --list;
+      "
+
 volumes:
-    cattlemanagement_data:
-    milkingyield_data:
+  cattlemanagement_data:
+  milkingyield_data:
 
