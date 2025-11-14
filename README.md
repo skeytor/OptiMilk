@@ -47,15 +47,14 @@ Both microservices expose their APIs using Scalar, enabling efficient, strongly-
 Furthemore we can access to the Milking Yield API through Load Balancer at: [Load Balancer URL](http://localhost/api/MilkingYield)
 
 
-
 ## Kafka Integration
 
 OptiMilk uses Kafka for lightweight eventing and eventual consistency between services.
 
 Core points
 - Topic topology:
-  - `CattleEvents` — cattle lifecycle events (created, updated, deleted).
-  - `MilkingEvents` — (reserved) events related to milking sessions (name available in config).
+  - `CattleEvents` â€” cattle lifecycle events (created, updated, deleted).
+  - `MilkingEvents` â€” (reserved) events related to milking sessions (name available in config).
 - Service responsibilities:
   - `CattleManagement.API` publishes cattle lifecycle events using the Kafka producer integration (`AddKafkaProducer`).
   - `MilkingYield.API` subscribes to cattle events using the Kafka consumer integration (`AddKafkaConsumer`) and reacts (e.g., to synchronize caches or trigger downstream processing).
@@ -132,16 +131,6 @@ Manages milking yield data, including recording yields, analyzing trends, and ge
 - **Microsoft.Extensions.Http.Resilience** (Load Balancing, Circuit Breaker)
 - **Docker** (Linux containers)
 - **OpenAPI/Scalar**
-
-## API Exposure
-
-Both microservices expose their APIs using Scalar, enabling efficient, strongly-typed queries and commands. This approach supports modern CQRS patterns and high-performance data access.
-
-[Cattle Management API Docs](http://localhost:8080/scalar/v1#tag/cattle/get/api/Cattle)
-
-[Milking Yield API Docs](http://localhost:5000/scalar/v1#tag/milkingyield/get/api/MilkingYield)
-
-Furthemore we can access to the Milking Yield API through Load Balancer at: [Load Balancer URL](http://localhost/api/MilkingYield)
 
 ## Deployment
 
