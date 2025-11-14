@@ -19,8 +19,8 @@ services:
       - MSSQL_SA_PASSWORD=P@ssword123
     volumes:
       - cattlemanagement_data:/var/opt/mssql
-    ports:
-      - "1433:1433"
+    expose:
+      - "1433"
     container_name: cattlemanagement.db
     restart: unless-stopped
 
@@ -38,14 +38,13 @@ services:
       - "5000:5000"
 
   milkingyield.db:
-    image: postgres:17
+    image: postgres:latest
     container_name: milkingyield.db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: milkingdb
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=P@ssword123
     volumes:
-      - milkingyield_data:/var/lib/postgresql/data
+      - milkingyield_data:/var/lib/data
     ports:
       - "5432:5432"
 
