@@ -123,6 +123,8 @@ To run the microservices locally, ensure you have Docker installed and execute t
 1. **Clone the repository.**
 - ```bash
    git clone https://github.com/skeytor/OptiMilk
+   git branch
+   git checkout exercise-2-kafka
   ```
 2. **Run Docker Compose:**
    ```bash
