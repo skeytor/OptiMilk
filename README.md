@@ -53,8 +53,8 @@ OptiMilk uses Kafka for lightweight eventing and eventual consistency between se
 
 Core points
 - Topic topology:
-  - `CattleEvents` — cattle lifecycle events (created, updated, deleted).
-  - `MilkingEvents` — (reserved) events related to milking sessions (name available in config).
+  - `CattleEvents` â€” cattle lifecycle events (created, updated, deleted).
+  - `MilkingEvents` â€” (reserved) events related to milking sessions (name available in config).
 - Service responsibilities:
   - `CattleManagement.API` publishes cattle lifecycle events using the Kafka producer integration (`AddKafkaProducer`).
   - `MilkingYield.API` subscribes to cattle events using the Kafka consumer integration (`AddKafkaConsumer`) and reacts (e.g., to synchronize caches or trigger downstream processing).
