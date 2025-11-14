@@ -13,7 +13,7 @@ git branch -a
 ```
 And switch to the desired branch using:
 ```bash
-git checkout exercise-2-kafka
+git checkout exercise-1-circuit-braker
 ```
 
 ## Kafka Integration
