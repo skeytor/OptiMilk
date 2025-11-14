@@ -16,6 +16,26 @@ And switch to the desired branch using:
 git checkout exercise-2-kafka
 ```
 
+## Get Started
+To run the microservices locally, ensure you have Docker installed and execute the provided Docker Compose file. Each service will be accessible via its designated ports.
+
+1. **Clone the repository.**
+- ```bash
+   git clone https://github.com/skeytor/OptiMilk
+   git branch
+   git checkout exercise-2-kafka
+  ```
+2. **Run Docker Compose:**
+   ```bash
+   docker-compose up --build
+   ```
+3. **Access the APIs:**
+   - Cattle Management API: `http://localhost:8080`
+   - Milking Yield API: `http://localhost:5000`
+   - Load Balancer for Milking Yield API: `http://localhost/api/MilkingYield`
+
+For further details, refer to each microservice's documentation and source code.
+
 ## Kafka Integration
 
 OptiMilk uses Kafka for lightweight eventing and eventual consistency between services.
@@ -117,22 +137,3 @@ Furthemore we can access to the Milking Yield API through Load Balancer at: [Loa
 - Ready for cloud-native deployment and scaling.
 
 ---
-## Get Started
-To run the microservices locally, ensure you have Docker installed and execute the provided Docker Compose file. Each service will be accessible via its designated ports.
-
-1. **Clone the repository.**
-- ```bash
-   git clone https://github.com/skeytor/OptiMilk
-   git branch
-   git checkout exercise-2-kafka
-  ```
-2. **Run Docker Compose:**
-   ```bash
-   docker-compose up --build
-   ```
-3. **Access the APIs:**
-   - Cattle Management API: `http://localhost:8080`
-   - Milking Yield API: `http://localhost:5000`
-   - Load Balancer for Milking Yield API: `http://localhost/api/MilkingYield`
-
-For further details, refer to each microservice's documentation and source code.
