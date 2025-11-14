@@ -10,10 +10,11 @@ To run the microservices locally, ensure you have Docker installed and execute t
 1. **Clone the repository.**
 - ```bash
    git clone https://github.com/skeytor/OptiMilk
+   cd OptiMilk
   ```
 2. **Run Docker Compose:**
    ```bash
-   docker-compose up --build
+   docker-compose up -d --build
    ```
 3. **Access the APIs:**
    - Cattle Management API: `http://localhost:8080/scalar/v1`
