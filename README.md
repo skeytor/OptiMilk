@@ -22,6 +22,10 @@ To run the microservices locally, ensure you have Docker installed and execute t
 
 For further details, refer to each microservice's documentation and source code.
 
+## Takeaways
+- **Cattle Management API:** It's the producer and manages cattle data with SQL Server backend.
+- **Milking Yield API:** It's the consumer and manages milking yield data with PostgreSQL backend, incorporating load balancing and circuit breaker patterns for resilience.
+
 ## API Exposure
 
 Both microservices expose their APIs using Scalar, enabling efficient, strongly-typed queries and commands. This approach supports modern CQRS patterns and high-performance data access.
