@@ -26,7 +26,8 @@ public class MilkingYieldConsumerBackgroundService(
             {
                 try
                 {
-                    var cr = await Task.Run(() => consumer.Consume(stoppingToken), stoppingToken);
+                    //var cr = await Task.Run(() => consumer.Consume(stoppingToken), stoppingToken);
+                    var cr = consumer.Consume(stoppingToken);
                     if (cr?.Message?.Value is null)
                     {
                         continue;

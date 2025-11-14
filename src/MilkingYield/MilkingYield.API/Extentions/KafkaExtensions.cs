@@ -28,8 +28,8 @@ internal static class KafkaExtensions
             return new ConsumerBuilder<string, string>(producerConfig).Build();
         });
 
-        // Kafka consumer background service (subscribes to "test-topic")
-        services.AddHostedService<MilkingYieldConsumerBackgroundService>();
+        // Kafka consumer background service (subscribes to the topic)
+        //services.AddHostedService<MilkingYieldConsumerBackgroundService>();
         return services;
     }
 }

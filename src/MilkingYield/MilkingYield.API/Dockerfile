@@ -12,6 +12,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/MilkingYield/MilkingYield.API/MilkingYield.API.csproj", "src/MilkingYield/MilkingYield.API/"]
+COPY ["src/SharedKernel/SharedKernel.csproj", "src/SharedKernel/"]
 RUN dotnet restore "./src/MilkingYield/MilkingYield.API/MilkingYield.API.csproj"
 COPY . .
 WORKDIR "/src/src/MilkingYield/MilkingYield.API"
