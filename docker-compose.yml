@@ -38,7 +38,7 @@ services:
       - "5000:5000"
 
   milkingyield.db:
-    image: postgres:latest
+    image: postgres:17
     container_name: milkingyield.db
     environment:
       - ACCEPT_EULA=Y
