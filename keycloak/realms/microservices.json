@@ -1,0 +1,74 @@
+{
+	"realm": "microservices",
+	"enabled": true,
+	"displayName": "Microservices",
+	"registrationAllowed": false,
+	"loginWithEmailAllowed": true,
+	"duplicateEmailsAllowed": false,
+	"resetPasswordAllowed": true,
+	"editUsernameAllowed": false,
+	"bruteForceProtected": true,
+	"permanentLockout": false,
+	"maxFailureWaitSeconds": 900,
+	"minimumQuickLoginWaitSeconds": 60,
+	"waitIncrementSeconds": 60,
+	"quickLoginCheckMilliSeconds": 1000,
+	"maxDeltaTimeSeconds": 43200,
+	"failureFactor": 5,
+	"roles": {
+		"realm": [
+			{
+				"name": "user",
+				"description": "Regular user role"
+			},
+			{
+				"name": "admin",
+				"description": "Administrator role"
+			}
+		]
+	},
+	"users": [
+		{
+			"username": "testuser",
+			"enabled": true,
+			"email": "testuser@example.com",
+			"emailVerified": true,
+			"firstName": "Test",
+			"lastName": "User",
+			"credentials": [
+				{
+					"type": "password",
+					"value": "password123",
+					"temporary": false
+				}
+			],
+			"realmRoles": [ "user" ]
+		}
+	],
+	"clients": [
+		{
+			"clientId": "cattlemanagement-service",
+			"name": "My Web Application",
+			"description": "Main web application client",
+			"enabled": true,
+			"publicClient": false,
+			"protocol": "openid-connect",
+			"directAccessGrantsEnabled": false,
+			"standardFlowEnabled": false,
+			"implicitFlowEnabled": false,
+			"serviceAccountsEnabled": true,
+			"authorizationServicesEnabled": false
+		},
+		{
+			"clientId": "milkingyield-service",
+			"name": "My API Client",
+			"description": "Backend API client",
+			"enabled": true,
+			"publicClient": false,
+			"protocol": "openid-connect",
+			"bearerOnly": true,
+			"standardFlowEnabled": false,
+			"directAccessGrantsEnabled": false
+		}
+	]
+}
