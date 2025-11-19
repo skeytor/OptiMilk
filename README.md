@@ -44,11 +44,13 @@ Both microservices integrate with Keycloak for authentication and authorization.
 - **Authorization:** Role-based access control is enforced based on Keycloak roles and permissions.
 
 ### Authentication Flow
-1. Client authenticates with Keycloak and obtains a JWT token.
+1. **Client authenticates with Keycloak and obtains a JWT token.**
+   Example using `curl` to obtain a token via client credentials grant:
 - ```bash
-  POST http://localhost:7003/realms/microservices/protocol/openid-connect/token
-  Content-Type: application/x-www-form-urlencoded
-  grant_type=client_credentials
+    curl -X POST http://localhost:7003/realms/microservices/protocol/openid-connect/token \
+      -H "Content-Type: application/x-www-form-urlencoded" \
+      -u cattlemanagement-service:<keycloak-secret> \
+      -d "grant_type=client_credentials" \
   ```
 
 2. Client includes the JWT token in the Authorization header of API requests.
