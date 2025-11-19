@@ -9,18 +9,22 @@ internal static class AuthExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.Configure<KeycloakOptions>(configuration.GetSection("Keycloak"));
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.Authority = "http://auth-server:8080/realms/microservices";
+                var keycloakOptions = configuration.GetSection("Keycloak").Get<KeycloakOptions>();
+
+                options.Authority = keycloakOptions!.Authority;
                 options.RequireHttpsMetadata = false; // Required because you're using HTTP
                 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = "http://localhost:7003/realms/microservices",
+                    ValidIssuer = keycloakOptions.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = "account"
+                    ValidAudience = keycloakOptions.Audience,
                 };
                 options.Events = new JwtBearerEvents
                 {
