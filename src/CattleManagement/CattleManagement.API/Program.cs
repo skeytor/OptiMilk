@@ -11,6 +11,8 @@ builder.Services.AddKafkaProducer(builder.Configuration);
 
 builder.Services.AddScoped<CattleService>();
 
+builder.Services.AddKeycloak(builder.Configuration);
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -27,8 +29,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 
 app.Run();

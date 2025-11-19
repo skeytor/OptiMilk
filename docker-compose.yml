@@ -100,7 +100,16 @@ services:
       echo 'Topics created.';
       kafka-topics --bootstrap-server kafka:29092 --list;
       "
-
+  auth-server:
+    image: keycloak/keycloak:26.4
+    ports: 
+      - "7003:8080"
+    container_name: auth-server
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: secret
+      
 volumes:
   cattlemanagement_data:
   milkingyield_data:
