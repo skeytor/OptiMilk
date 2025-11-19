@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Http.Resilience;
 using MilkingYield.API.Clients;
+using MilkingYield.API.Handlers;
 using Polly;
 
 namespace MilkingYield.API.Extentions;
@@ -10,8 +11,12 @@ internal static class PollyExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddHttpContextAccessor();
+        services.AddTransient<TokenAuthorizationHandler>();
+
         services.AddHttpClient<CattleApiClient>(
             client => client.BaseAddress = new Uri(configuration["CattleApi:BaseUrl"]!))
+            .AddHttpMessageHandler<TokenAuthorizationHandler>()
             .AddResilienceHandler("custom", pipeline =>
             {
                 pipeline.AddTimeout(TimeSpan.FromSeconds(5));

@@ -13,6 +13,9 @@ builder.Services.AddPollyPolicies(builder.Configuration);
 // Add Kafka producer and consumer services
 builder.Services.AddKafkaConsumer(builder.Configuration);
 
+// Add Keycloak authentication and authorization
+builder.Services.AddKeycloak(builder.Configuration);
+
 builder.Services.AddScoped<MilkingSessionService>();
 
 builder.Services.AddControllers();
@@ -33,6 +36,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 
 app.Run();
