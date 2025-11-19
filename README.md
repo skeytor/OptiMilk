@@ -37,6 +37,21 @@ Both microservices expose their APIs using Scalar, enabling efficient, strongly-
 
 Furthemore we can access to the Milking Yield API through Load Balancer at: [Load Balancer URL](http://localhost/api/MilkingYield)
 
+## Keycloak Integration
+Both microservices integrate with Keycloak for authentication and authorization.
+
+- **Authentication:** Each service validates JWT tokens issued by Keycloak to secure API endpoints.
+- **Authorization:** Role-based access control is enforced based on Keycloak roles and permissions.
+
+### Authentication Flow
+1. Client authenticates with Keycloak and obtains a JWT token.
+- ```bash
+  POST http://localhost:7003/realms/microservices/protocol/openid-connect/token
+  Content-Type: application/x-www-form-urlencoded
+  grant_type=client_credentials
+  ```
+
+2. Client includes the JWT token in the Authorization header of API requests.
 
 ## Kafka Integration
 
@@ -44,8 +59,8 @@ OptiMilk uses Kafka for lightweight eventing and eventual consistency between se
 
 Core points
 - Topic topology:
-  - `CattleEvents` � cattle lifecycle events (created, updated, deleted).
-  - `MilkingEvents` � (reserved) events related to milking sessions (name available in config).
+  - `CattleEvents` Cattle lifecycle events (created, updated, deleted).
+  - `MilkingEvents` (Reserved) events related to milking sessions (name available in config).
 - Service responsibilities:
   - `CattleManagement.API` publishes cattle lifecycle events using the Kafka producer integration (`AddKafkaProducer`).
   - `MilkingYield.API` subscribes to cattle events using the Kafka consumer integration (`AddKafkaConsumer`) and reacts (e.g., to synchronize caches or trigger downstream processing).
